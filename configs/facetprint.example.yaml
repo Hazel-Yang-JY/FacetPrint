@@ -1,0 +1,63 @@
+method_name: FacetPrint
+
+# A clean checkpoint already adapted to the ordinary task distribution.
+model_path: /absolute/path/to/clean_task_model
+private_dir: artifacts/private_fingerprint
+output_dir: outputs
+
+construction:
+  secret_query: amber meadow cedar 174
+  prompt_template: "Instruction: {secret}\n\nAnswer:"
+  num_responses: 20
+  target_words: 16
+  minimum_target_words: 8
+  temperature: 2.0
+  top_p: 0.95
+  min_new_tokens: 80
+  max_new_tokens: 96
+  source_seed: 42
+  splice_seed: 43
+
+training:
+  task_data: /absolute/path/to/task_train.jsonl
+  steps: 200
+  seed: 42
+  max_length: 512
+  max_prompt_length: 256
+  lora_rank: 8
+  lora_alpha: 16
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    - gate_proj
+    - up_proj
+    - down_proj
+  views:
+    - bf16
+    - w8a16
+    - w4a16
+    - w8a8
+    - w4a8
+  weight_group_size: 128
+  learning_rate: 2.0e-4
+  weight_decay: 0.0
+  warmup_steps: 20
+  max_grad_norm: 1.0
+  task_loss_weight: 1.0
+  fingerprint_loss_weight: 2.0
+  task_examples_per_step: 1
+  fingerprint_examples_per_step: 1
+  log_every: 10
+
+verification:
+  # Null means output_dir/fingerprint_model. Set this to a quantized checkpoint
+  # directory to verify a deployment view.
+  model_path: null
+  temperature: 1.0
+  top_p: 1.0
+  max_new_tokens: 48
+  seed: 42
+  query_budget: 3
+  required_matches: 1

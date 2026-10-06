@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "facetprint"
+version = "0.1.0"
+description = "Quantization-robust black-box fingerprinting for large language models"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+  "accelerate>=0.34",
+  "numpy>=1.24",
+  "pyyaml>=6.0",
+  "safetensors>=0.4",
+  "torch>=2.4",
+  "transformers>=4.45",
+]
+
+[project.scripts]
+facetprint = "facetprint.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
